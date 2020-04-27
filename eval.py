@@ -6,7 +6,7 @@ from keras.preprocessing.image import ImageDataGenerator
 
 batch_size = 1000
 
-model = load_model('./models/baseline_model.h5')
+model = load_model('./models/augmentation_model.h5')
 model.summary()
 
 # classes
@@ -34,7 +34,8 @@ classes = sorted(os.listdir('./data/train'))
 idx2name = {}
 for i, x in enumerate(classes):
     idx2name[i] = x
-idx2name
+
+predict_classes = [idx2name[x] for x in predict_classes]
 
 # sort by filename number not string
 filenames = test_generator.filenames
@@ -49,4 +50,4 @@ submissions = pd.DataFrame({
                      len(predict_classes) + 1)),
     'label': sorted_predict_classes
 })
-submissions.to_csv('submits/aaa.csv', index=False, header=True)
+submissions.to_csv('submits/augmentation_model.csv', index=False, header=True)
