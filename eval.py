@@ -1,4 +1,5 @@
 import os
+import argparse
 import numpy as np
 import pandas as pd
 from keras.models import load_model
@@ -6,7 +7,12 @@ from keras.preprocessing.image import ImageDataGenerator
 
 batch_size = 1000
 
-model = load_model('./models/augmentation_model.h5')
+parser = argparse.ArgumentParser(description='evaluation script')
+parser.add_argument('model_file', type=str, help='model.h5')
+parser.add_argument('submit_csv_file', type=str, help='submit.csv')
+args = parser.parse_args()
+
+model = load_model(args.model_file)
 model.summary()
 
 # classes
@@ -50,4 +56,4 @@ submissions = pd.DataFrame({
                      len(predict_classes) + 1)),
     'label': sorted_predict_classes
 })
-submissions.to_csv('submits/augmentation_model.csv', index=False, header=True)
+submissions.to_csv(args.submit_csv_file, index=False, header=True)
