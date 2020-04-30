@@ -1,5 +1,6 @@
 import os
 import argparse
+import tqdm
 import numpy as np
 import pandas as pd
 from keras.models import load_model
@@ -36,7 +37,7 @@ test_generator = test_datagen.flow_from_directory('data/test',
                                                   shuffle=False)
 
 
-def tta(model, test_generator, batch_size, n_classes=10, epochs=50):
+def tta(model, test_generator, batch_size, n_classes=10, epochs=10):
     # Test Time Augmentation
     # epochs回だけaugmentationしたデータについて予測値を求め平均を返す
     test_size = test_generator.n
@@ -44,7 +45,8 @@ def tta(model, test_generator, batch_size, n_classes=10, epochs=50):
     assert test_size % batch_size == 0
     step_per_epoch = test_size // batch_size
     for epoch in range(epochs):
-        for step in range(step_per_epoch):
+        print('*** epoch: {}'.format(epoch))
+        for step in tqdm.tqdm(range(step_per_epoch)):
             start = batch_size * step
             end = start + batch_size
             test_data, _ = test_generator.next()
@@ -53,7 +55,7 @@ def tta(model, test_generator, batch_size, n_classes=10, epochs=50):
 
 
 # inference
-predictions = tta(model, test_generator, batch_size, epochs=50)
+predictions = tta(model, test_generator, batch_size, epochs=10)
 predict_classes = np.argmax(predictions, axis=1)
 
 classes = sorted(os.listdir('./data/train'))
